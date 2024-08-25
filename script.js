@@ -1,34 +1,34 @@
-document.getElementById('getWeatherButton').addEventListener('click', function() {
-    const city = document.getElementById('cityInput').value;
-    const apiKey = 'YOUR_API_KEY'; // Substitua por sua chave de API da OpenWeatherMap
+document.getElementById('getCountryButton').addEventListener('click', function() {
+    const countryName = document.getElementById('countryInput').value.trim();
 
-    if (city === '') {
-        alert('Por favor, digite o nome de uma cidade.');
+    if (countryName === '') {
+        alert('Please enter a country name.');
         return;
     }
 
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}&lang=pt_br`;
+    const url = `https://restcountries.com/v3.1/name/${countryName}`;
 
     fetch(url)
         .then(response => {
             if (!response.ok) {
-                throw new Error('Cidade não encontrada');
+                throw new Error('Country not found.');
             }
             return response.json();
         })
         .then(data => {
-            const weatherDescription = data.weather[0].description;
-            const temperature = data.main.temp;
-            const cityName = data.name;
-
-            document.getElementById('weatherResult').innerHTML = `
-                <p>Clima em ${cityName}: ${weatherDescription}</p>
-                <p>Temperatura: ${temperature}°C</p>
+            const country = data[0];
+            const countryInfo = `
+                <h2>${country.name.common}</h2>
+                <p><strong>Capital:</strong> ${country.capital ? country.capital[0] : 'N/A'}</p>
+                <p><strong>Region:</strong> ${country.region}</p>
+                <p><strong>Population:</strong> ${country.population.toLocaleString()}</p>
+                <p><strong>Area:</strong> ${country.area.toLocaleString()} km²</p>
+                <p><strong>Flag:</strong></p>
+                <img src="${country.flags.png}" alt="Flag of ${country.name.common}" width="100">
             `;
+            document.getElementById('countryResult').innerHTML = countryInfo;
         })
         .catch(error => {
-            document.getElementById('weatherResult').innerHTML = `
-                <p>${error.message}</p>
-            `;
+            document.getElementById('countryResult').innerHTML = `<p>${error.message}</p>`;
         });
 });
